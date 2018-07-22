@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <br>
+    <br>
+    <br>
+    {% if blogs|length == 0 %}
+        <p>No blogs yet</p>
+    {% else %}
+        {% for blog in blogs %}
+            <h1><a href="/display_blog?id={{ blog.id }}">{{blog.title}}</a></h1>
+            <p>{{blog.body}}</p>
+            <p><i>written by: <a href="/singleUser?id={{ user.id }}"> {{user.username}}</a> on {{blog.pub_date}}</i></p>
+            <input type="hidden" name="user_name" value="{{user.username}}" />
+            <hr />
+        {% endfor %}
+
+    {% endif %}
+
+{% endblock %}
