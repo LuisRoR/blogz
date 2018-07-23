@@ -1,13 +1,13 @@
 from app import db
 from datetime import datetime
+from hash import hash_password
 
 class Blog (db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(1000))
-    pub_date = db.Column(db.DateTime)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
+    pub_date = db.Column(db.DateTime)
     def __init__(self, title, body, owner, pub_date=None):
         self.title = title
         self.body = body
@@ -25,4 +25,4 @@ class User(db.Model):
     
     def __init__(self, username, password):
         self.username = username
-        self.password = password    
+        self.password = hash_password(password)    

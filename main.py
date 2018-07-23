@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from app import app, db
 from models import Blog, User
+from hash import check_password
 import cgi
 from sqlalchemy import desc
 
@@ -37,17 +38,16 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
 
-        if user and user.password == password:
+        if user and check_password(user.password, password):
             session['username'] = username
             flash("Logged in")
             return redirect('/newpost')
         else:
-            if user:
-                if password != user.password:
-                    flash('Incorrect password, try again!', 'error')
-                    return redirect ('/login')  
-            else:  
+            if not user:
                 flash('User does not exist, try again!', 'error')     
+                return redirect ('/login')  
+            else:  
+                flash('Incorrect password, try again!', 'error')
             return redirect ('/login') 
         
     return render_template('login.html')
@@ -94,7 +94,7 @@ def index():
 @app.route('/blog', methods=['POST', 'GET'])
 def list_blogs(): 
     if request.method == 'POST': 
-        blog_title = request.form['blog']
+        blog_title = request.form['title']
         blog_body = request.form['body']
        
         error_page = validate_entry(blog_title, blog_body)
